@@ -59,12 +59,13 @@ def get_dataloaders(
     elif dataset_name in ["tiny_imagenet", "tinyimagenet"]:
         tiny_dir = download_and_extract_tiny_imagenet(data_dir)
         train_dir = os.path.join(tiny_dir, "train")
+        val_dir = os.path.join(tiny_dir, "val")
 
         train_tf = get_train_transforms("tiny_imagenet", augment=use_augmentation, target_size=target_size)
         val_tf   = get_test_transforms("tiny_imagenet", target_size=target_size)
 
         train_set = ImageFolder(root=train_dir, transform=train_tf)
-        val_set   = ImageFolder(root=train_dir, transform=val_tf)
+        val_set   = ImageFolder(root=val_dir, transform=val_tf)
         num_classes = 200
         classes = train_set.classes
 

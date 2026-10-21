@@ -74,6 +74,7 @@ class ModelProfiler:
         self.model = model
         self.input_size = input_size
         self.device = torch.device(device)
+        self.model = self.model.to(self.device)
         self.total_params, self.trainable_params = self._count_parameters()
         self.macs, self.flops = self._compute_flops()
 
@@ -83,17 +84,7 @@ class ModelProfiler:
         return total, trainable
 
     def _compute_flops(self) -> Tuple[int, int]:
-        """Calculates MACs and FLOPs using PyTorch module hooks or thop."""
-        try:
-            import thop
-            dummy = torch.randn(*self.input_size, device=self.device)
-            self.model.eval()
-            macs, _ = thop.profile(self.model, inputs=(dummy,), verbose=False)
-            return int(macs), int(2 * macs)
-        except Exception:
-            pass
-
-        # Native PyTorch Forward Hook Profiler
+        """Calculates MACs and FLOPs using native PyTorch forward hooks."""
         total_macs = 0
         hooks = []
 
